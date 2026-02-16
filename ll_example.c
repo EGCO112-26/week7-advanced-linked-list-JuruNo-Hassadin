@@ -1,12 +1,12 @@
-// ll_example.c
+/* ll_example.c */
 #include <stdio.h>
-#include "ll.h" // เรียกใช้ไฟล์ header ที่เราสร้าง
+#include "ll.h" // เรียกใช้ไฟล์ Header ที่เราสร้างไว้
 
 int main(void) {
-    LLPtr startPtr = NULL; // list เริ่มต้นเป็น empty
-    unsigned int choice;   // ตัวเลือกเมนู
-    int item;              // id ที่รับเข้ามา
-    char name[50];         // name ที่รับเข้ามา
+    LLPtr startPtr = NULL; // เริ่มต้นเป็น NULL
+    unsigned int choice;
+    int item;
+    char name[50];
 
     instructions(); // แสดงเมนู
 
@@ -20,7 +20,7 @@ int main(void) {
                 scanf("%d %s", &item, name);
                 insert(&startPtr, item, name);
                 
-                // แสดงผลทั้งขาไปและขากลับ
+                // แสดงผลตามโจทย์ (ทั้งไปและกลับ)
                 printList(startPtr);
                 printReverse(startPtr);
                 break;
