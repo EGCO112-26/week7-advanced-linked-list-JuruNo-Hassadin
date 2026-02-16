@@ -43,7 +43,8 @@ void printList(LLPtr currentPtr) {
         puts("List is empty.");
     } else {
         while (currentPtr != NULL) {
-            printf("%d %s --> ", currentPtr->id, currentPtr->name);
+            // แก้ไข: ลบเว้นวรรคหลังลูกศร เพื่อให้ตรงกับ Autograder (-->NULL)
+            printf("%d %s -->", currentPtr->id, currentPtr->name);
             currentPtr = currentPtr->nextPtr;
         }
         puts("NULL");
@@ -61,7 +62,8 @@ void printReverse(LLPtr currentPtr) {
 
     // 2. วิ่งย้อนกลับมาหัวแถวโดยใช้ pPtr
     while (currentPtr != NULL) {
-        printf("%d %s --> ", currentPtr->id, currentPtr->name);
+        // แก้ไข: ลบเว้นวรรคหลังลูกศร
+        printf("%d %s -->", currentPtr->id, currentPtr->name);
         currentPtr = currentPtr->pPtr;
     }
     puts("NULL");
