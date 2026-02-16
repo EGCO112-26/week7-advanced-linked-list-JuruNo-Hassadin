@@ -1,11 +1,10 @@
-// Fig. 12.3: fig12_03.c
-// Inserting and deleting nodes in a list
+// ll_example.c
 #include <stdio.h>
-#include <stdlib.h>
-#include "ll.h"
+#include "ll.h" // เรียกใช้ไฟล์ header ที่เราสร้าง
+
 int main(void) {
-    LLPtr startPtr = NULL; 
-    unsigned int choice;   
+    LLPtr startPtr = NULL; // list เริ่มต้นเป็น empty
+    unsigned int choice;   // ตัวเลือกเมนู
     int item;              // id ที่รับเข้ามา
     char name[50];         // name ที่รับเข้ามา
 
@@ -21,7 +20,7 @@ int main(void) {
                 scanf("%d %s", &item, name);
                 insert(&startPtr, item, name);
                 
-                
+                // แสดงผลทั้งขาไปและขากลับ
                 printList(startPtr);
                 printReverse(startPtr);
                 break;
@@ -53,15 +52,8 @@ int main(void) {
         scanf("%u", &choice);
     }
 
-   
-    puts("Clear all nodes");
-    LLPtr tempPtr;
-    while (startPtr != NULL) {
-        tempPtr = startPtr;
-        printf("delete %d\n", startPtr->id); // แสดงตัวที่กำลังลบ
-        startPtr = startPtr->nextPtr;
-        free(tempPtr);
-    }
+    // ล้างข้อมูลทั้งหมดก่อนจบโปรแกรม
+    clearAll(&startPtr);
     puts("End of run.");
 
     return 0;

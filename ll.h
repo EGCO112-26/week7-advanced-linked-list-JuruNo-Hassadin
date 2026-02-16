@@ -1,30 +1,34 @@
+// ll.h
+#ifndef LL_H
+#define LL_H
 
-// self-referential structure
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// ------------------------------------------
+// 1. สร้าง Structure และ Typedef
+// ------------------------------------------
 struct Node {
-    int id;             // เปลี่ยน data เป็น id
-    char name[50];      // เพิ่มตัวแปรเก็บชื่อ
-    struct Node *nextPtr; // ชี้ไปตัวถัดไป
-    struct Node *pPtr;    // ชี้ไปตัวก่อนหน้า (Previous Pointer)
+    int id;               
+    char name[50];        
+    struct Node *nextPtr; // ขาไป
+    struct Node *pPtr;    // ขากลับ (Previous)
 };
 
 typedef struct Node LLnode;
 typedef LLnode *LLPtr;
 
+// ------------------------------------------
+// 2. สร้างฟังก์ชัน (Implementation)
+// ------------------------------------------
 
+// เช็คว่าลิสต์ว่างหรือไม่
+int isEmpty(LLPtr sPtr) {
+    return sPtr == NULL;
+}
 
-// prototypes
-
-void insert(LLPtr *sPtr, int value, char *n);
-int deletes(LLPtr *sPtr, int value);
-int isEmpty(LLPtr sPtr);
-void printList(LLPtr currentPtr);
-void printReverse(LLPtr currentPtr); // ฟังก์ชันใหม่สำหรับปริ้นย้อนกลับ
-void instructions(void);
-
-
-
-
-
+// แสดงเมนูคำสั่ง
 void instructions(void) {
     puts("Enter your choice:\n"
          "   1 to insert an element into the list.\n"
@@ -32,7 +36,7 @@ void instructions(void) {
          "   3 to end.");
 }
 
-// 2. แก้ insert ให้จัดการ pointer 4 ทิศทาง
+// แทรกข้อมูล (Insert)
 void insert(LLPtr *sPtr, int value, char *n) {
     LLPtr newPtr;
     LLPtr previousPtr;
@@ -42,14 +46,14 @@ void insert(LLPtr *sPtr, int value, char *n) {
 
     if (newPtr != NULL) {
         newPtr->id = value;
-        strcpy(newPtr->name, n); // copy string
+        strcpy(newPtr->name, n);
         newPtr->nextPtr = NULL;
         newPtr->pPtr = NULL;
 
         previousPtr = NULL;
         currentPtr = *sPtr;
 
-        // วนลูปหาตำแหน่งเรียงตาม id น้อยไปมาก
+        // วนหาตำแหน่งที่เหมาะสม (เรียงจากน้อยไปมาก)
         while (currentPtr != NULL && value > currentPtr->id) {
             previousPtr = currentPtr;
             currentPtr = currentPtr->nextPtr;
@@ -59,18 +63,18 @@ void insert(LLPtr *sPtr, int value, char *n) {
         if (previousPtr == NULL) {
             newPtr->nextPtr = *sPtr;
             if (*sPtr != NULL) {
-                (*sPtr)->pPtr = newPtr; // ผูกขากลับของหัวเก่ามาหาตัวใหม่
+                (*sPtr)->pPtr = newPtr; // ผูกขากลับ
             }
             *sPtr = newPtr;
         } 
         // กรณีแทรกระหว่างกลาง หรือ ท้ายแถว
         else {
             previousPtr->nextPtr = newPtr;
-            newPtr->pPtr = previousPtr; // ผูกขากลับไปหาตัวก่อนหน้า
+            newPtr->pPtr = previousPtr; // ผูกขากลับ
 
             newPtr->nextPtr = currentPtr;
             if (currentPtr != NULL) {
-                currentPtr->pPtr = newPtr; // ผูกขากลับของตัวถัดไปมาหาตัวใหม่
+                currentPtr->pPtr = newPtr; // ผูกขากลับตัวถัดไป
             }
         }
     } else {
@@ -78,23 +82,26 @@ void insert(LLPtr *sPtr, int value, char *n) {
     }
 }
 
-// 3. แก้ delete ให้ตัด pointer ขาไปและขากลับ
+// ลบข้อมูล (Delete)
 int deletes(LLPtr *sPtr, int value) {
     LLPtr previousPtr;
     LLPtr currentPtr;
     LLPtr tempPtr;
 
-    if (value == (*sPtr)->id) { // ลบตัวแรก
+    // ลบตัวแรก (Head)
+    if (value == (*sPtr)->id) {
         tempPtr = *sPtr;
         *sPtr = (*sPtr)->nextPtr;
         
         if (*sPtr != NULL) {
-            (*sPtr)->pPtr = NULL; // ตัดขากลับของหัวใหม่
+            (*sPtr)->pPtr = NULL; // ตัดขากลับ
         }
         
         free(tempPtr);
-        return 1; // สำเร็จ
-    } else {
+        return 1;
+    } 
+    // ลบตัวอื่น
+    else {
         previousPtr = *sPtr;
         currentPtr = (*sPtr)->nextPtr;
 
@@ -105,21 +112,17 @@ int deletes(LLPtr *sPtr, int value) {
 
         if (currentPtr != NULL) { // เจอตัวที่จะลบ
             tempPtr = currentPtr;
-            previousPtr->nextPtr = currentPtr->nextPtr; // ข้ามตัวที่จะลบ (ขาไป)
+            previousPtr->nextPtr = currentPtr->nextPtr; // ข้ามตัวที่จะลบ
             
             if (currentPtr->nextPtr != NULL) {
-                currentPtr->nextPtr->pPtr = previousPtr; // ข้ามตัวที่จะลบ (ขากลับ)
+                currentPtr->nextPtr->pPtr = previousPtr; // เชื่อมขากลับข้ามตัวที่ลบ
             }
             
             free(tempPtr);
-            return 1; // สำเร็จ
+            return 1;
         }
     }
-    return 0; // ไม่เจอ
-}
-
-int isEmpty(LLPtr sPtr) {
-    return sPtr == NULL;
+    return 0;
 }
 
 // แสดงผลขาไป (Forward)
@@ -136,21 +139,33 @@ void printList(LLPtr currentPtr) {
     }
 }
 
-// แสดงผลขากลับ (Backward)
+// แสดงผลขากลับ (Reverse)
 void printReverse(LLPtr currentPtr) {
-    if (isEmpty(currentPtr)) {
-        return; // ว่างก็ไม่ต้องทำอะไร (ข้อความแสดงใน printList แล้ว)
-    }
+    if (isEmpty(currentPtr)) return;
 
-    // 1. วิ่งไปให้สุดแถวก่อน
+    // วิ่งไปท้ายสุดก่อน
     while (currentPtr->nextPtr != NULL) {
         currentPtr = currentPtr->nextPtr;
     }
 
-    // 2. วิ่งย้อนกลับมาหัวแถวโดยใช้ pPtr
+    // วิ่งย้อนกลับ
     while (currentPtr != NULL) {
         printf("%d %s --> ", currentPtr->id, currentPtr->name);
         currentPtr = currentPtr->pPtr;
     }
     puts("NULL");
 }
+
+// ล้างข้อมูลทั้งหมด (Clear All)
+void clearAll(LLPtr *sPtr) {
+    puts("Clear all nodes");
+    LLPtr tempPtr;
+    while (*sPtr != NULL) {
+        tempPtr = *sPtr;
+        printf("delete %d\n", (*sPtr)->id);
+        *sPtr = (*sPtr)->nextPtr;
+        free(tempPtr);
+    }
+}
+
+#endif
